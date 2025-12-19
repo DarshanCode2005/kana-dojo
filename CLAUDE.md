@@ -29,12 +29,14 @@ npm run test
 Claude Code has been configured with automatic approval for common development commands and file operations. See `.claude/README.md` for full details. Approved commands include:
 
 **Bash Commands:**
+
 - ✅ All npm and npx commands
 - ✅ Safe git commands (status, diff, log, add, commit, pull, stash, fetch)
 - ✅ File operations (ls, cat, find, grep, sed, awk, head, tail, mkdir, cp, mv)
 - ✅ All cmd /c commands (Windows)
 
 **File Editing Tools:**
+
 - ✅ Read - Read file contents
 - ✅ Write - Create or overwrite files
 - ✅ Edit - Make precise edits to existing files
@@ -43,6 +45,7 @@ Claude Code has been configured with automatic approval for common development c
 - ✅ TodoWrite - Manage task lists
 
 **Safety:**
+
 - ❌ Destructive operations are blocked (force push, hard reset, recursive delete)
 
 This means Claude Code can run verification, testing, file editing, and most development commands without asking for approval each time.
@@ -79,9 +82,11 @@ git add -A && git commit -m "feat(kana): add dakuon character support" -m "Added
 ```
 
 **Important Notes:**
+
 - Git commits are executed automatically after code changes
 - Git push is NOT automatic - you maintain control over what goes to remote
 - Commits follow conventional commit format for clear history
+- Keep commit messages concise and professional without unnecessary footers
 
 ---
 
