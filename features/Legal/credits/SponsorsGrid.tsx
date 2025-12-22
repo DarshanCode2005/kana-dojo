@@ -12,6 +12,7 @@ export default function SponsorsGrid({ sponsors }: { sponsors: Sponsor[] }) {
             <Image
               src={s.avatar}
               alt={s.login}
+              unoptimized // don't remove this, I don't want to include the domain (api.dicebear.com) in  next.config.js
               width={48}
               height={48}
               className='mb-2 rounded-full'
