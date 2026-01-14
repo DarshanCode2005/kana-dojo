@@ -12,7 +12,6 @@ permissions:
 jobs:
   validate-and-merge:
     runs-on: ubuntu-latest
-    # Only run for PRs that might be community contributions
     if: contains(github.event.pull_request.title, 'theme') || contains(github.event.pull_request.title, 'fact') || contains(github.event.pull_request.title, 'Theme') || contains(github.event.pull_request.title, 'Fact')
 
     steps:
@@ -38,6 +37,8 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const fs = require('fs');
+            const templates = require('./.github/templates/messages.js');
+            const t = templates.communityReview;
 
             const prTitle = context.payload.pull_request.title;
             const prTitleLower = prTitle.toLowerCase();
@@ -50,7 +51,6 @@ jobs:
             let linkedIssue = null;
             let foundIssue = null;
 
-            // Detect contribution type
             const isThemeContribution = prTitleLower.includes('theme');
             const isFactContribution = prTitleLower.includes('fact');
 
@@ -59,14 +59,12 @@ jobs:
               return;
             }
 
-            // Check if issue is already linked
             const issueMatch = prBody.match(/[Cc]loses?\s*#(\d+)|[Ff]ixes?\s*#(\d+)/);
             if (issueMatch) {
               linkedIssue = parseInt(issueMatch[1] || issueMatch[2]);
               console.log('Issue already linked: #' + linkedIssue);
             }
 
-            // If no issue linked, try to find it
             if (!linkedIssue) {
               console.log('No issue linked, searching for matching issue...');
               
@@ -124,7 +122,6 @@ jobs:
 
             const targetIssue = linkedIssue || foundIssue;
 
-            // Validate the contribution
             if (isThemeContribution) {
               validationType = 'theme';
               console.log('Validating theme contribution');
@@ -191,7 +188,6 @@ jobs:
 
             isValid = errors.length === 0;
 
-            // Update PR body with linked issue if found
             if (foundIssue && !linkedIssue) {
               const newBody = prBody + '\n\n---\n🤖 **Auto-linked:** Closes #' + foundIssue;
               await github.rest.pulls.update({
@@ -203,30 +199,27 @@ jobs:
               console.log('Updated PR body to link issue #' + foundIssue);
             }
 
-            // Post validation comment
             let commentBody;
             if (isValid) {
               let issueNote = '';
               if (foundIssue && !linkedIssue) {
-                issueNote = '\n\n📎 **Auto-detected issue:** #' + foundIssue + ' will be closed when this PR is merged.';
+                issueNote = '\n\n' + t.passed.autoDetectedIssue.replace('{issue}', foundIssue);
               } else if (linkedIssue) {
-                issueNote = '\n\n📎 **Linked issue:** #' + linkedIssue;
+                issueNote = '\n\n' + t.passed.linkedIssue.replace('{issue}', linkedIssue);
               }
               
-              commentBody = '## 🤖 Auto-Review: ✅ Passed\n\n' +
-                'This ' + validationType + ' contribution has passed automated validation!\n\n' +
-                '**Checks passed:**\n' +
-                '- ✅ File format is correct\n' +
-                '- ✅ Content is valid\n' +
-                '- ✅ Related issue found' + issueNote + '\n\n' +
-                'Once the quality check passes, this PR will be automatically approved for merge.';
+              const checks = t.passed.checks.map(function(c) { return '- ✅ ' + c; }).join('\n');
+              
+              commentBody = t.passed.title + '\n\n' +
+                t.passed.body.replace('{type}', validationType) + '\n\n' +
+                '**Checks passed:**\n' + checks + issueNote + '\n\n' +
+                t.passed.footer;
             } else {
               const errorList = errors.map(function(e) { return '- ❌ ' + e; }).join('\n');
-              commentBody = '## 🤖 Auto-Review: ❌ Issues Found\n\n' +
-                'This ' + validationType + ' contribution has some issues that need to be fixed:\n\n' +
+              commentBody = t.failed.title + '\n\n' +
+                t.failed.body.replace('{type}', validationType) + '\n\n' +
                 errorList + '\n\n' +
-                '**Please fix the above issues and push again.**\n\n' +
-                'Need help? Comment below and we\'ll assist! 🙌';
+                t.failed.footer;
             }
 
             await github.rest.issues.createComment({
@@ -236,14 +229,13 @@ jobs:
               body: commentBody
             });
 
-            // Approve and enable auto-merge if valid
             if (isValid) {
               await github.rest.pulls.createReview({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 pull_number: prNumber,
                 event: 'APPROVE',
-                body: '🤖 Automated approval - all validation checks passed!'
+                body: t.approval
               });
               
               try {
@@ -258,7 +250,7 @@ jobs:
                   owner: context.repo.owner,
                   repo: context.repo.repo,
                   issue_number: prNumber,
-                  body: '🚀 **Auto-merge enabled!** This PR will be automatically merged once all required checks pass.'
+                  body: t.autoMergeEnabled
                 });
               } catch (e) {
                 console.log('Could not enable auto-merge: ' + e.message);

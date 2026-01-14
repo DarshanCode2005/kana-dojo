@@ -39,26 +39,25 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const fs = require('fs');
+            const templates = require('./.github/templates/messages.js');
+            const t = templates.prCheck.failure;
+
             const output = fs.readFileSync('check_output.txt', 'utf8');
-
-            // Truncate if too long
             const maxLength = 60000;
-            let truncatedOutput = output;
-            if (output.length > maxLength) {
-              truncatedOutput = output.substring(0, maxLength) + '\n\n... (output truncated)';
-            }
+            let truncatedOutput = output.length > maxLength 
+              ? output.substring(0, maxLength) + '\n\n... (output truncated)'
+              : output;
 
-            const body = '## ❌ Quality Check Failed\n\n' +
-              'The `npm run check` command found issues that need to be fixed before this PR can be merged.\n\n' +
-              '<details>\n' +
-              '<summary>View full output</summary>\n\n' +
-              '```\n' + truncatedOutput + '\n```\n\n' +
-              '</details>\n\n' +
-              '**How to fix:**\n' +
-              '1. Run `npm run check` locally\n' +
-              '2. Fix any TypeScript, ESLint, or formatting errors\n' +
-              '3. Push your fixes to this PR\n\n' +
-              'Need help? Comment below and we\'ll assist! 🙌';
+            const howToFix = t.howToFix.map(function(step, i) { 
+              return (i + 1) + '. ' + step; 
+            }).join('\n');
+
+            const body = t.title + '\n\n' +
+              t.body + '\n\n' +
+              '<details>\n<summary>View full output</summary>\n\n' +
+              '```\n' + truncatedOutput + '\n```\n\n</details>\n\n' +
+              '**How to fix:**\n' + howToFix + '\n\n' +
+              t.footer;
 
             await github.rest.issues.createComment({
               owner: context.repo.owner,
@@ -77,7 +76,9 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            // Check if we already commented success (avoid spam on multiple pushes)
+            const templates = require('./.github/templates/messages.js');
+            const t = templates.prCheck.success;
+
             const { data: comments } = await github.rest.issues.listComments({
               owner: context.repo.owner,
               repo: context.repo.repo,
@@ -94,8 +95,6 @@ jobs:
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 issue_number: context.payload.pull_request.number,
-                body: '## ✅ Quality Check Passed\n\n' +
-                  'All TypeScript, ESLint, and formatting checks passed! 🎉\n\n' +
-                  'A maintainer will review your changes shortly.'
+                body: t.title + '\n\n' + t.body + '\n\n' + t.footer
               });
             }
