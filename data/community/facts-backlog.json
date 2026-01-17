@@ -233,12 +233,15 @@
   {
     "id": 37,
     "fact": "Japanese business cards (meishi) are exchanged with both hands and a bow - placing one in your pocket immediately is considered disrespectful.",
-    "issued": true
+    "issued": true,
+    "completed": true,
+    "completedBy": "DarshanCode2005",
+    "completedPR": 765
   },
   {
     "id": 38,
     "fact": "The word 'gaman' (我慢) means enduring the seemingly unbearable with patience and dignity - a core Japanese cultural value.",
-    "issued": false
+    "issued": true
   },
   {
     "id": 39,
