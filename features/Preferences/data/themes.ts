@@ -242,6 +242,12 @@ const baseThemeSets: BaseThemeGroup[] = [
     icon: Moon,
     themes: [
       {
+        id: 'cyber-kitsune',
+        backgroundColor: 'oklch(13.0% 0.058 295.0 / 1)',
+        mainColor: 'oklch(78.0% 0.195 45.0 / 1)',
+        secondaryColor: 'oklch(70.0% 0.220 310.0 / 1)'
+      },
+      {
         id: 'rice-field-gold',
         backgroundColor: 'oklch(24.0% 0.045 80.0 / 1)',
         mainColor: 'oklch(85.0% 0.155 90.0 / 1)',
