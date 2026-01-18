@@ -242,6 +242,12 @@ const baseThemeSets: BaseThemeGroup[] = [
     icon: Moon,
     themes: [
       {
+        id: 'okinawa-sea',
+        backgroundColor: 'oklch(23.0% 0.055 215.0 / 1)',
+        mainColor: 'oklch(82.0% 0.165 195.0 / 1)',
+        secondaryColor: 'oklch(90.0% 0.125 180.0 / 1)'
+      },
+      {
         id: 'wasabi-punch',
         backgroundColor: 'oklch(20.0% 0.048 160.0 / 1)',
         mainColor: 'oklch(72.0% 0.185 145.0 / 1)',
