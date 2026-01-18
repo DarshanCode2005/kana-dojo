@@ -241,6 +241,13 @@ const baseThemeSets: BaseThemeGroup[] = [
     name: 'Dark',
     icon: Moon,
     themes: [
+      {
+        id: 'okinawa-sea',
+        backgroundColor: 'oklch(23.0% 0.055 215.0 / 1)',
+        mainColor: 'oklch(82.0% 0.165 195.0 / 1)',
+        secondaryColor: 'oklch(90.0% 0.125 180.0 / 1)'
+      },
+      
     {
         id: 'sashimi-fresh',
         backgroundColor: 'oklch(17.0% 0.028 280.0 / 1)',
