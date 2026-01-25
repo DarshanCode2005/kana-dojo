@@ -4,7 +4,7 @@
 
 <div align="center">
 
-![KanaDojo Banner](https://github.com/user-attachments/assets/b7931764-be5e-43c7-b1b3-9d2568b2fecf)
+![KanaDojo Banner](https://github.com/user-attachments/assets/56716ee9-9347-4224-9fe2-ef1beb93e286)
 
 **An aesthetic, minimalist and highly customizable platform for mastering Japanese inspired by Monkeytype**
 
@@ -69,12 +69,12 @@ npm run check
 <div align="center">
 
 ### Home Page
-
+<!--
 ![Home](https://github.com/user-attachments/assets/cac78e72-4d31-43e8-8160-104c431e55be)
+-->
+### Training Screen
 
-### Training
-
-![Training](https://github.com/user-attachments/assets/053020ef-77c7-492b-b8db-c381d1ec7db8)
+![Training](https://github.com/user-attachments/assets/d491708f-2ad3-41c7-9717-dec8a90afd03)
 
 ### Themes & Customization
 
